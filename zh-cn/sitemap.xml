@@ -139,6 +139,18 @@
     <loc>http://jtntr.github.io/luolileyuan-blog/p/emoji-support/</loc>
     <lastmod>2019-03-05T00:00:00+00:00</lastmod>
   </url><url>
+    <loc>http://jtntr.github.io/luolileyuan-blog/about/</loc>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="http://jtntr.github.io/luolileyuan-blog/en/about/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh-cn"
+                href="http://jtntr.github.io/luolileyuan-blog/about/"
+                />
+  </url><url>
     <loc>http://jtntr.github.io/luolileyuan-blog/links/</loc>
     <xhtml:link
                 rel="alternate"
@@ -161,18 +173,6 @@
                 rel="alternate"
                 hreflang="zh-cn"
                 href="http://jtntr.github.io/luolileyuan-blog/search/"
-                />
-  </url><url>
-    <loc>http://jtntr.github.io/luolileyuan-blog/%E5%85%B3%E4%BA%8E/</loc>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="http://jtntr.github.io/luolileyuan-blog/en/about/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh-cn"
-                href="http://jtntr.github.io/luolileyuan-blog/%E5%85%B3%E4%BA%8E/"
                 />
   </url>
 </urlset>

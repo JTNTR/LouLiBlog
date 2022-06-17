@@ -473,6 +473,15 @@ $$&lt;/p&gt;</description>
 &lt;/div&gt;</description>
         </item>
         <item>
+        <title>About</title>
+        <link>http://jtntr.github.io/luolileyuan-blog/about/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>http://jtntr.github.io/luolileyuan-blog/about/</guid>
+        <description>&lt;p&gt;This is a test page for i18n support.&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Links</title>
         <link>http://jtntr.github.io/luolileyuan-blog/links/</link>
         <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -514,15 +523,6 @@ $$&lt;/p&gt;</description>
         
         <guid>http://jtntr.github.io/luolileyuan-blog/search/</guid>
         <description></description>
-        </item>
-        <item>
-        <title>关于</title>
-        <link>http://jtntr.github.io/luolileyuan-blog/%E5%85%B3%E4%BA%8E/</link>
-        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-        
-        <guid>http://jtntr.github.io/luolileyuan-blog/%E5%85%B3%E4%BA%8E/</guid>
-        <description>&lt;p&gt;This is a test page for i18n support.&lt;/p&gt;
-</description>
         </item>
         
     </channel>

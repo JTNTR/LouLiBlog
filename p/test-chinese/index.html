@@ -5,7 +5,7 @@
 
 <link rel='canonical' href='http://jtntr.github.io/luolileyuan-blog/p/test-chinese/'>
 
-<link rel="stylesheet" href="/luolileyuan-blog/scss/style.min.16416c9f13919a279f94e0459ea6b2e8b21f2f7ea06b583be9a6afafbd20ecdd.css"><meta property='og:title' content='Chinese Test'>
+<link rel="stylesheet" href="/luolileyuan-blog/scss/style.min.cfca6dfb399b251cddba323c314ad51be91a49fa155a89b4e5b5443999b4666e.css"><meta property='og:title' content='Chinese Test'>
 <meta property='og:description' content='这是一个副标题'>
 <meta property='og:url' content='http://jtntr.github.io/luolileyuan-blog/p/test-chinese/'>
 <meta property='og:site_name' content='萝莉乐园'>
@@ -120,7 +120,7 @@
         
 
         <li >
-            <a href='/luolileyuan-blog/luolileyuan-blog/%E5%85%B3%E4%BA%8E/' >
+            <a href='/luolileyuan-blog/luolileyuan-blog/about/' >
                 
                 
                 
@@ -498,6 +498,48 @@
      
     
         
+    <script src="https://utteranc.es/client.js" 
+        repo="JTNTR/blog-comment-utterances-repo"
+        issue-term="title"
+        
+        label="博客评论"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
     
 
     <footer class="site-footer">
@@ -649,6 +691,14 @@
         document.head.appendChild(customFont);
     }());
 </script>
-
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cf0ac899c60b46276c0e5589a6602e0c";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
     </body>
 </html>
