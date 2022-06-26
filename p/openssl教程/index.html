@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='关于OpenSSL的介绍与使用教程'><title>OpenSSL教程</title>
+
+<link rel='canonical' href='https://jtntr.github.io/luolileyuan-blog/p/openssl%E6%95%99%E7%A8%8B/'>
+
+<link rel="stylesheet" href="/luolileyuan-blog/scss/style.min.5d6aad847a0f1572d33f8bffe9b42477cb5a73114b112191cf96e32ababcc2d2.css">
+
+<script  src="https://jtntr.github.io/luolileyuan-blog/js/jquery.js" ></script><script  src="https://jtntr.github.io/luolileyuan-blog/js/jquery.qrcode.min.js" ></script><meta property='og:title' content='OpenSSL教程'>
+<meta property='og:description' content='关于OpenSSL的介绍与使用教程'>
+<meta property='og:url' content='https://jtntr.github.io/luolileyuan-blog/p/openssl%E6%95%99%E7%A8%8B/'>
+<meta property='og:site_name' content='萝莉乐园'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='OpenSSL' /><meta property='article:tag' content='自签证书' /><meta property='article:tag' content='加密' /><meta property='article:published_time' content='2022-06-23T22:14:03&#43;08:00'/><meta property='article:modified_time' content='2022-06-23T22:14:03&#43;08:00'/><meta property='og:image' content='https://jtntr.github.io/luolileyuan-blog/p/openssl%E6%95%99%E7%A8%8B/ced7813d880f11ebb6edd017c2d2eca2.jpg' />
+<meta name="twitter:title" content="OpenSSL教程">
+<meta name="twitter:description" content="关于OpenSSL的介绍与使用教程"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://jtntr.github.io/luolileyuan-blog/p/openssl%E6%95%99%E7%A8%8B/ced7813d880f11ebb6edd017c2d2eca2.jpg' />
+    <link rel="shortcut icon" href="https://jtntr.github.io/luolileyuan-blog/%E5%8D%A1%E9%80%9A%E7%8C%AB.ico" />
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/luolileyuan-blog">
+                
+                    
+                    
+                    
+                        
+                        <img src="/luolileyuan-blog/img/avatar_hu62e495c187b777038eeb8450dcbc3e04_172713_300x0_resize_q75_box.jpg" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">😍</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/luolileyuan-blog">萝莉乐园</a></h1>
+            <h2 class="site-description">我不是萝莉控！只是我喜欢的女孩子刚好是萝莉而已。</h2>
+        </div>
+
+        <div class="site-other">
+         
+            <div  class="site-date">
+                   
+                
+                    <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1655303248350" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="9661" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200"><defs><style type="text/css">@font-face { font-family: feedback-iconfont; src: url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.woff2?t=1630033759944") format("woff2"), url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.woff?t=1630033759944") format("woff"), url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.ttf?t=1630033759944") format("truetype"); }
+</style></defs><path d="M935.812877 88.243078h-87.685776V29.784188a29.226886 29.226886 0 1 0-58.453771 0v58.45889H234.331789V29.784188a29.226886 29.226886 0 1 0-58.453771 0v58.45889H88.187123C39.762336 88.243078 0.501347 127.498948 0.501347 175.923735v759.945098c0 48.429907 39.260989 87.685776 87.685776 87.685776h847.625754c48.424787 0 87.685776-39.260989 87.685776-87.685776V175.928854c0-48.424787-39.260989-87.685776-87.685776-87.685776z m29.226886 847.625755a29.232005 29.232005 0 0 1-29.226886 29.232005H88.187123a29.232005 29.232005 0 0 1-29.226886-29.232005V351.300406h906.079526v584.568427z m0-643.027317H58.960237V175.928854a29.226886 29.226886 0 0 1 29.226886-29.226885h87.685776v29.226885a29.226886 29.226886 0 1 0 58.453771 0v-29.226885h555.341541v29.226885a29.226886 29.226886 0 1 0 58.453771 0v-29.226885h87.685776a29.226886 29.226886 0 0 1 29.226885 29.226885V292.841516z" p-id="9662"></path><path d="M512 526.671958c24.179117 0 43.842888-19.663771 43.842888-43.842888A43.842888 43.842888 0 0 0 512 438.986182a43.807052 43.807052 0 0 0-43.842888 43.842888c0 24.173998 19.597218 43.842888 43.842888 43.842888zM745.825323 877.409942c24.184237 0 43.842888-19.663771 43.842888-43.842888a43.842888 43.842888 0 0 0-43.842888-43.842888 43.801932 43.801932 0 0 0-43.842888 43.842888c0.005119 24.179117 19.602337 43.842888 43.842888 43.842888zM512 702.03839c24.179117 0 43.842888-19.658651 43.842888-43.842888 0-24.240551-19.663771-43.837769-43.842888-43.837768a43.801932 43.801932 0 0 0-43.842888 43.837768A43.842888 43.842888 0 0 0 512 702.03839zM745.825323 526.671958c24.184237 0 43.842888-19.663771 43.842888-43.842888a43.842888 43.842888 0 0 0-43.842888-43.842888 43.807052 43.807052 0 0 0-43.842888 43.842888c0.005119 24.173998 19.602337 43.842888 43.842888 43.842888zM745.825323 702.03839c24.184237 0 43.842888-19.658651 43.842888-43.842888 0-24.240551-19.663771-43.837769-43.842888-43.837768a43.801932 43.801932 0 0 0-43.842888 43.837768c0.005119 24.184237 19.602337 43.842888 43.842888 43.842888zM512 877.409942c24.179117 0 43.842888-19.663771 43.842888-43.842888a43.842888 43.842888 0 0 0-43.842888-43.842888 43.801932 43.801932 0 0 0-43.842888 43.842888 43.842888 43.842888 0 0 0 43.842888 43.842888zM278.174677 877.409942c24.179117 0 43.842888-19.663771 43.842888-43.842888a43.842888 43.842888 0 0 0-43.842888-43.842888 43.801932 43.801932 0 0 0-43.842888 43.842888 43.842888 43.842888 0 0 0 43.842888 43.842888zM278.174677 702.03839c24.179117 0 43.842888-19.658651 43.842888-43.842888 0-24.240551-19.663771-43.837769-43.842888-43.837768a43.801932 43.801932 0 0 0-43.842888 43.837768 43.842888 43.842888 0 0 0 43.842888 43.842888zM278.174677 526.671958c24.179117 0 43.842888-19.663771 43.842888-43.842888a43.842888 43.842888 0 0 0-43.842888-43.842888 43.807052 43.807052 0 0 0-43.842888 43.842888c0 24.173998 19.597218 43.842888 43.842888 43.842888z" p-id="9663"></path></svg>
+                
+                2022年06月26日
+            </div>
+            <div  class="site-views">
+               
+            
+                <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1655303123374" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7158" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200"><defs><style type="text/css">@font-face { font-family: feedback-iconfont; src: url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.woff2?t=1630033759944") format("woff2"), url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.woff?t=1630033759944") format("woff"), url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.ttf?t=1630033759944") format("truetype"); }
+</style></defs><path d="M300.032 558.08V427.52c0-19.968 13.312-35.84 29.696-35.84s29.696 15.872 29.696 35.84V558.08c0 19.968-13.312 35.84-29.696 35.84s-29.696-15.872-29.696-35.84zM480.256 558.08V363.52c0-19.968 13.312-35.84 29.696-35.84 16.384 0 29.696 15.872 29.696 35.84v194.56c0 19.968-13.312 35.84-29.696 35.84-16.384 0-29.696-15.872-29.696-35.84zM660.48 558.08V299.52c0-19.968 13.312-35.84 29.696-35.84s29.696 15.872 29.696 35.84V558.08c0 19.968-13.312 35.84-29.696 35.84s-29.696-15.872-29.696-35.84z" p-id="7159"></path><path d="M861.696 781.312H568.32v117.248h146.944c16.384 0 29.184 13.312 29.184 29.184 0 16.384-13.312 29.184-29.184 29.184H362.496c-16.384-1.024-28.672-14.848-27.648-30.72 1.024-14.848 12.8-27.136 27.648-27.648h146.944v-117.248H157.184c-65.024 0-117.248-52.736-117.248-117.248V194.048C39.936 129.024 92.16 76.8 157.184 76.8h704.512c65.024 0 117.248 52.736 117.248 117.248v470.016c0.512 64.512-52.224 117.248-117.248 117.248z m58.88-587.264c0-32.256-26.112-58.88-58.88-58.88H157.184c-32.256 0-58.88 26.112-58.88 58.88v470.016c0 32.256 26.112 58.88 58.88 58.88h704.512c32.256 0 58.88-26.112 58.88-58.88V194.048z" p-id="7160"></path></svg>
+            
+            <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_uv"></span>次</span></div>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/luolileyuan-blog/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/luolileyuan-blog/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/luolileyuan-blog/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/luolileyuan-blog/analysis/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>分析</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/luolileyuan-blog/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/luolileyuan-blog/links/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>链接</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://jtntr.github.io/luolileyuan-blog/en/" >English</option>
+                        
+                            <option value="https://jtntr.github.io/luolileyuan-blog/" selected>中文</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/luolileyuan-blog/p/openssl%E6%95%99%E7%A8%8B/">
+                <img src="/luolileyuan-blog/p/openssl%E6%95%99%E7%A8%8B/ced7813d880f11ebb6edd017c2d2eca2_hu2eb8e9977f4e9340435d7297adf43360_1943157_800x0_resize_q75_box.jpg"
+                        srcset="/luolileyuan-blog/p/openssl%E6%95%99%E7%A8%8B/ced7813d880f11ebb6edd017c2d2eca2_hu2eb8e9977f4e9340435d7297adf43360_1943157_800x0_resize_q75_box.jpg 800w, /luolileyuan-blog/p/openssl%E6%95%99%E7%A8%8B/ced7813d880f11ebb6edd017c2d2eca2_hu2eb8e9977f4e9340435d7297adf43360_1943157_1600x0_resize_q75_box.jpg 1600w"
+                        width="800" 
+                        height="450" 
+                        loading="lazy"
+                        alt="Featured image of post OpenSSL教程" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/luolileyuan-blog/categories/%E5%B7%A5%E5%85%B7/" >
+                工具
+            </a>
+        
+            <a href="/luolileyuan-blog/categories/openssl/" >
+                OpenSSL
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/luolileyuan-blog/p/openssl%E6%95%99%E7%A8%8B/">OpenSSL教程</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            关于OpenSSL的介绍与使用教程
+        </h3>
+        
+    </div>
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jun 23, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 7 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="相关概念">相关概念</h1>
+<p><strong>SSL</strong>即安全套接字协议，是为网络通信提供安全及数据完整性的一种安全协议。</p>
+<p><strong>数字证书</strong>是一个经证书授权中心数字签名的包含公开密钥拥有者信息以及公开密钥的文件。最简单的证书包含一个公开密钥、名称以及证书授权中心的数字签名。</p>
+<p>一般证书分有三类，<strong>根证书</strong>、<strong>服务器证书</strong>和<strong>客户端证书</strong>。</p>
+<p>根证书是生成服务器证书和客户端证书的基础，是信任的源头，也可以叫自签发证书，即CA证书。</p>
+<p>服务器证书由根证书签发，配置在服务器上的证书。</p>
+<p>客户端证书由根证书签发配置在服务器上，并发送给客户，让客户安装在浏览器里的证书。</p>
+<p><strong>公钥</strong>是公开的，用来传输对方的随机密钥，只有通过私钥才能解密，这时就只有双方知道密钥了，从而达到安全传输的目的。</p>
+<p><strong>私钥</strong>是自己保留，只有通过私钥才能解密公钥加密的数据，对于私钥的使用可以设置密码。</p>
+<p>最常见的单向认证为例，简述一下通信过程：</p>
+<ol>
+<li>
+<p>客户端向服务器发送请求。</p>
+</li>
+<li>
+<p>服务器将包含公钥的证书通过明文发送给客户端。</p>
+</li>
+<li>
+<p>客户端通过根证书验证服务器证书是否有效。</p>
+</li>
+<li>
+<p>如果有效，客户端生成一个随机密钥，也叫对称加密密钥，使用服务器的公钥进行加密传输。</p>
+</li>
+<li>
+<p>服务器通过私钥解密客户端传输的对称加密密钥。</p>
+</li>
+<li>
+<p>这时只有服务器和客户端知道这个对称加密密钥，双方可以进行对称加密传输。</p>
+</li>
+</ol>
+<p><img src="/luolileyuan-blog/H:%5c%e7%bb%85%e5%a3%ab%5cGOLang%5chugo%5cj-blog%5ccontent%5cpost%5copenSSL%5c%e9%80%9a%e4%bf%a1%e8%bf%87%e7%a8%8b.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<h1 id="openssl使用教程">OpenSSL使用教程</h1>
+<blockquote>
+<p>OpenSSL是一个安全套接字层密码库，其包括常用的密码算法、常用的密钥生成和证书封装管理功能及SSL协议，并提供了一个丰富的应用程序以供测试。</p>
+<p>/usr/lib/ssl/openssl.cnf是配置文件。</p>
+</blockquote>
+<p>OpenSSl是一个开源项目，其由三个部分组成：</p>
+<ol>
+<li>
+<p>openssl命令行工具。</p>
+</li>
+<li>
+<p>libencrypt加密算法库。</p>
+</li>
+<li>
+<p>libssl加密模块应用库。</p>
+</li>
+</ol>
+<p>openssl命令工具有两种运行模式：<strong>交换模式</strong>和<strong>批处理模式</strong>。直接输入openssl回车即可进入交互模式，而输入带命令选项的openssl命令则进行批处理模式。</p>
+<h2 id="命令">命令</h2>
+<p>    查看当前OpenSSL版本</p>
+<blockquote>
+<p>openssl version -a</p>
+</blockquote>
+<p>    对称加密<strong>enc</strong></p>
+<blockquote>
+<p>openssl enc -ciphername [-in filename] [-out filename] [-pass arg] [-e] [-d] [-a/-base64] [-A] [-k password] [-kfile filename] [-K key] [-iv IV] [-S salt] [-salt] [-nosalt] [-z] [-md] [-p] [-P] [-bufsize number] [-nopad] [-debug] [-none] [-engine id]</p>
+<p>选项：</p>
+<p>-e:：加密；</p>
+<p>-d：解密；</p>
+<p>-ciphername：ciphername为相应的对称加密算命名字，如-des3、-ase128、-cast、-blowfish等等</p>
+<p>-a/-base64：使用base-64位编码格式</p>
+<p>-salt：自动插入一个随机数作为文件内容加密，默认选项；</p>
+<p>-in FILENAME：指定要加密的文件的存放路径；</p>
+<p>-out FILENAME：指定加密后的文件的存放路径</p>
+</blockquote>
+<p>    单向加密<strong>dgst</strong></p>
+<blockquote>
+<p>openssl dgst [-md5|-md4|-md2|-sha1|-sha|-mdc2|-ripemd160|-dss1] [-c] [-d] [-hex] [-binary] [-out filename] [-sign filename] [-keyform arg] [-passin arg] [-verify filename] [-prverify filename] [-signature filename] [-hmac key] [file&hellip;]</p>
+<p>选项：</p>
+<p>[-md5|-md4|-md2|-sha1|-sha|-mdc2|-ripemd160|-dss1]：指定一种单向加密算法；</p>
+<p>-out FILENAME：将加密的内容保存到指定的文件中；</p>
+<p>单向加密除了openssl dgst工具还有：md5sum，sha1sum，sha224sum，sha256sum ，sha384sum，sha512sum。</p>
+</blockquote>
+<p>    加密密码<strong>password</strong>，生成密码的hash离散值。</p>
+<blockquote>
+<p>openssl passwd [-crypt] [-1] [-apr1] [-salt string] [-in file] [-stdin] [-noverify] [-quiet] [-table] {password}</p>
+<p>选项：</p>
+<p>-salt STRING：添加随机数；</p>
+<p>-in FILE：对输入的文件内容进行加密；</p>
+<p>-stdin：对标准输入的内容进行加密；</p>
+</blockquote>
+<p>    生成随机数<strong>rand</strong></p>
+<blockquote>
+<p>openssl rand [-out file] [-rand file(s)] [-base64] [-hex] num</p>
+<p>选项：</p>
+<p>-base64：以base64编码格式输出。</p>
+<p>-hex：使用十六进制编码格式。</p>
+<p>-out FILE：将生成的内容保存在指定的文件中。</p>
+</blockquote>
+<p>    生成密钥对，<strong>genrsa</strong>生成私钥，然后再使用<strong>rsa</strong>从私钥中提取公钥。</p>
+<blockquote>
+<p>openssl genrsa [-out filename] [-passout arg] [-des] [-des3] [-idea] [-f4] [-3] [-rand file(s)] [-engine id] [numbits]</p>
+<p>选项：</p>
+<p>-out FILENAME：将生成的私钥保存至指定的文件中；</p>
+<p>[-des] [-des3] [-idea]：指定加密算法。</p>
+<p>numbits：指明生成的私钥大小，默认是512。</p>
+<p>openssl rsa [-inform PEM|NET|DER] [-outform PEM|NET|DER] [-in filename] [-passin arg] [-out filename] [-passout arg] [-sgckey] [-des] [-des3] [-idea] [-text] [-noout] [-modulus] [-check] [-pubin] [-pubout] [-engine id]</p>
+<p>选项：</p>
+<p>-in FILENAME：指明私钥文件的存放路径。</p>
+<p>-out FILENAME：指明将公钥的保存路径。</p>
+<p>-pubout：根据提供的私钥，从中提取公钥。</p>
+</blockquote>
+<p>    创建CA和申请证书，<strong>req</strong>用于生成自签证书</p>
+<blockquote>
+<p>openssl    req [-inform PEM|DER] [-outform PEM|DER] [-in filename] [-passin arg] [-out filename] [-passout arg] [-text] [-pubkey] [-noout] [-verify] [-modulus] [-new] [-rand file(s)] [-newkey rsa:bits] [-newkey dsa:file] [-nodes] [-key filename] [-keyform PEM|DER] [-keyout filename] [-[md5|sha1|md2|mdc2]] [-config filename] [-subj arg] [-multivalue-rdn] [-x509] [-days n] [-set_serial n] [-asn1-kludge] [-newhdr] [-extensions section] [-reqexts section] [-utf8] [-nameopt] [-batch] [-verbose] [-engine id]</p>
+<p>选项：</p>
+<p>-x509：专用于生成CA自签证书</p>
+<p>-days：指定证书的有效期限，单位为day，默认是365天</p>
+<p>-inform arg ：指定输入文件格式，可以为DER或PEM，默认为PEM。</p>
+<p>-outform  arg：指定输出文件格式，可以为DER或PEM，默认为PEM。</p>
+<p>-in  arg：  指定输入文件。</p>
+<p>-out arg：指定输出文件。</p>
+<p>-new ：创建新的证书请求文件。</p>
+<p>-key  file： 指定生成证书用到的私钥文件。</p>
+<p>-keyform arg： 指定创建证书请求的私钥文件的格式，可以为DER或PEM，默认为PEM。</p>
+<p>-passion  arg：指定私钥文件的口令保护来源。</p>
+<p>-verify： 校验证书请求文件的主体签名是否有效。</p>
+<p>-noout：不打印证书请求信息。</p>
+<p>-text：文件打印证书请求文件。</p>
+<p>-modulus：输出证书请求的模数</p>
+<p>-keyout：指定生成的私钥文件名</p>
+</blockquote>
+<p>    <strong>ca</strong>命令用于在CA服务器上签署或吊销证书</p>
+<blockquote>
+<p>openssl ca [-verbose] [-config filename] [-name section] [-gencrl]</p>
+<p>[-revoke file] [-crl_reason reason] [-crl_hold instruction] [-crl_compromise time]</p>
+<p>[-crl_CA_compromise time] [-subj arg] [-crldays days][-crlhours hours]</p>
+<p>[-crlexts section] [-startdate date] [-enddate date]</p>
+</blockquote>
+<p>    <strong>x509</strong></p>
+<blockquote>
+<p>选项：</p>
+<p>-noout：不输出加密的证书内容。</p>
+<p>-serial：输出证书序列号。</p>
+<p>-dates：显示证书有效期的开始和终止时间。</p>
+<p>-subject：输出证书的subject</p>
+</blockquote>
+<p>    <strong>crl</strong>工具，用于处理PME或DER格式的CRL文件</p>
+<h1 id="使用案例">使用案例</h1>
+<h2 id="一生成证书签名请求csr">一、生成证书签名请求(CSR)</h2>
+<h4 id="11-生成私钥和csr">1.1 生成私钥和CSR</h4>
+<p>小面命令创建一个2048位的私钥（domain.key）以及一个CSR（domain.csr）:</p>
+<blockquote>
+<p>openssl req <br>
+-newkey rsa:2048 -nodes -keyout domain.key <br>
+-out domain.csr</p>
+</blockquote>
+<h4 id="12-使用已有私钥生成csr">1.2 使用已有私钥生成CSR</h4>
+<p>如果你已经有了一个私钥，那么可以直接用它来向CA申请证书。下面命令使用一个已有的私钥（domain.key）创建一个新的CSR（domain.csr）</p>
+<blockquote>
+<p>openssl req <br>
+-key domain.key <br>
+-new -out domain.csr</p>
+</blockquote>
+<h4 id="13-使用已有的证书和私钥生成csr">1.3 使用已有的证书和私钥生成CSR</h4>
+<p>如果你需要续订已有的证书，但你和CA都没有原始的CSR，那可以再次生成CSR。</p>
+<blockquote>
+<p>openssl x509 <br>
+-in domain.crt <br>
+-signkey domain.key <br>
+-x509toreq -out domain.csr</p>
+</blockquote>
+<h2 id="二生成ssl证书">二、生成SSL证书</h2>
+<p>如果你只是想用SSL证书加固你的web服务器，但是并不需要CA签名的证书，那么简单的方法是自签证书。</p>
+<h4 id="21-生成自签名证书">2.1 生成自签名证书</h4>
+<p>下面的命令创建一个2048的私钥（domain.key）以及一个自签名证书（domain.crt）。</p>
+<blockquote>
+<p>openssl req <br>
+-newkey rsa:2048 -nodes -keyout domain.key <br>
+-x509 -days 365 -out domain.crt</p>
+</blockquote>
+<h4 id="22-使用已有私钥生成自签名证书">2.2 使用已有私钥生成自签名证书</h4>
+<blockquote>
+<p>openssl req <br>
+-key domain.key <br>
+-new <br>
+-x509 -days 365 -out domain.crt</p>
+</blockquote>
+<h4 id="23-使用已有的私钥和csr生成自签名证书">2.3 使用已有的私钥和CSR生成自签名证书</h4>
+<blockquote>
+<p>openssl x509 <br>
+-signkey domain.key <br>
+-in domain.csr <br>
+-req -days 365 -out domain.crt</p>
+</blockquote>
+<h2 id="三查看证书">三、查看证书</h2>
+<h4 id="31-查看csr条目">3.1 查看CSR条目</h4>
+<p>下面的命令可以查看CSR文件的明文文本并进行验证</p>
+<blockquote>
+<p>openssl req -text -noout -verify -in domain.csr</p>
+</blockquote>
+<h4 id="32-查看证书条目">3.2 查看证书条目</h4>
+<blockquote>
+<p>openssl x509 -text -noout -in domain.crt</p>
+</blockquote>
+<h4 id="33-验证证书是否由ca签发">3.3 验证证书是否由CA签发</h4>
+<p>下面命令用来验证证书（domain.crt）是否由证书颁发机构（ca.crt）签发</p>
+<blockquote>
+<p>openssl verify -verbose -CAFile ca.crt domain.crt</p>
+</blockquote>
+<h2 id="四私钥生成与验证">四、私钥生成与验证</h2>
+<h4 id="41-创建私钥">4.1 创建私钥</h4>
+<p>下面创建一个密码保护的2048位私钥domain.key</p>
+<blockquote>
+<p>openssl genrsa -des3 -out domain.key 2048</p>
+</blockquote>
+<h4 id="42-验证私钥">4.2 验证私钥</h4>
+<p>下面命令可以验证私钥domain.key是否有效</p>
+<blockquote>
+<p>openssl rsa -check -in domain.key</p>
+</blockquote>
+<h4 id="43-验证私钥与证书和csr匹配">4.3 验证私钥与证书和CSR匹配</h4>
+<p>下面命令验证私钥domain.key是否与证书domain。crt以及CSR匹配：如果下面三个命令的输出一致，那么有极高的概率可以人为私钥、证书和CSR是相关的</p>
+<blockquote>
+<p>openssl rsa -noout -modulus -in domain.key | openssl md5
+openssl x509 -noout -modulus -in domain.crt | openssl md5
+openssl req -noout -modulus -in domain.csr | openssl md5</p>
+</blockquote>
+<h4 id="44-加密私钥">4.4 加密私钥</h4>
+<p>下面命令将私钥unencrypted.key加密，输出加密后的私钥encrypted.key</p>
+<blockquote>
+<p>openssl rsa -des3 <br>
+-in unencrypted.key <br>
+-out encrypted.key</p>
+</blockquote>
+<p>4.5 解密私钥</p>
+<p>下面命令将加密私钥encrypted.key解密，并输出明文结果</p>
+<blockquote>
+<p>openssl rsa <br>
+-in encrypted.key <br>
+-out decrypted.key</p>
+</blockquote>
+<h2 id="五证书格式转换">五、证书格式转换</h2>
+<h4 id="51-pem转der">5.1 PEM转DER</h4>
+<blockquote>
+<p>openssl x509 <br>
+-in domain.crt <br>
+-outform der -out domain.der</p>
+</blockquote>
+<h4 id="52-der转pem">5.2 DER转PEM</h4>
+<blockquote>
+<p>openssl x509 <br>
+-inform der -in domain.der <br>
+-out domain.crt</p>
+</blockquote>
+<h4 id="53-pem转pkcs7">5.3 PEM转PKCS7</h4>
+<blockquote>
+<p>openssl crl2pkcs7 -nocrl <br>
+-certfile domain.crt <br>
+-certfile ca-chain.crt <br>
+-out domain.p7b</p>
+</blockquote>
+<h4 id="54-pkcs7转换为pem">5.4 PKCS7转换为PEM</h4>
+<blockquote>
+<p>openssl pkcs7 <br>
+-in domain.p7b <br>
+-print_certs -out domain.crt</p>
+</blockquote>
+<h4 id="55-pem转换为pkcs12">5.5 PEM转换为PKCS12</h4>
+<blockquote>
+<p>openssl pkcs12 <br>
+-inkey domain.key <br>
+-in domain.crt <br>
+-export -out domain.pfx</p>
+</blockquote>
+<h4 id="56-pkcs12转换为pem">5.6 PKCS12转换为PEM</h4>
+<blockquote>
+<p>openssl pkcs12 <br>
+-in domain.pfx <br>
+-nodes -out domain.combined.crt</p>
+</blockquote>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/luolileyuan-blog/tags/openssl/">OpenSSL</a>
+        
+            <a href="/luolileyuan-blog/tags/%E8%87%AA%E7%AD%BE%E8%AF%81%E4%B9%A6/">自签证书</a>
+        
+            <a href="/luolileyuan-blog/tags/%E5%8A%A0%E5%AF%86/">加密</a>
+        
+    </section>
+
+    <div class="qrcode-container">
+  <img src=https://jtntr.github.io/luolileyuan-blog/img/qrcode-logo.png style="display: none;" id="img-buffer" />
+  <div id="qrcode"></div>
+</div>
+<script>
+  (function () {
+    
+    function utf16to8(str) {
+      var out, i, len, c;
+      out = "";
+      len = str.length;
+      for (i = 0; i < len; i++) {
+        c = str.charCodeAt(i);
+        if ((c >= 0x0001) && (c <= 0x007F)) {
+          out += str.charAt(i);
+        } else if (c > 0x07FF) {
+          out += String.fromCharCode(0xE0 | ((c >> 12) & 0x0F));
+          out += String.fromCharCode(0x80 | ((c >> 6) & 0x3F));
+          out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
+        } else {
+          out += String.fromCharCode(0xC0 | ((c >> 6) & 0x1F));
+          out += String.fromCharCode(0x80 | ((c >> 0) & 0x3F));
+        }
+      }
+      return out;
+    };
+    let qrWidth = 200;
+    let qrHeight = 200;
+    let logoQrWidth = qrWidth / 4;
+    let logoQrHeight = qrHeight / 4;
+    $('#qrcode').qrcode({
+
+      text: window.location.href,
+      
+      width: qrWidth,
+      height: qrHeight,
+      background: "#424242",
+      foreground: "#41afea",
+    })
+    $("#qrcode canvas")[0].getContext('2d').drawImage($("#img-buffer")[0], (qrWidth - logoQrWidth) / 2, (qrHeight - logoQrHeight) / 2, logoQrWidth, logoQrHeight);
+    
+    
+
+  })()
+</script>
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo="JTNTR/blog-comment-utterances-repo"
+        issue-term="title"
+        
+        label="博客评论"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 萝莉乐园
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.11.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#命令">命令</a></li>
+  </ol>
+
+  <ol>
+    <li><a href="#一生成证书签名请求csr">一、生成证书签名请求(CSR)</a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#11-生成私钥和csr">1.1 生成私钥和CSR</a></li>
+            <li><a href="#12-使用已有私钥生成csr">1.2 使用已有私钥生成CSR</a></li>
+            <li><a href="#13-使用已有的证书和私钥生成csr">1.3 使用已有的证书和私钥生成CSR</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#二生成ssl证书">二、生成SSL证书</a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#21-生成自签名证书">2.1 生成自签名证书</a></li>
+            <li><a href="#22-使用已有私钥生成自签名证书">2.2 使用已有私钥生成自签名证书</a></li>
+            <li><a href="#23-使用已有的私钥和csr生成自签名证书">2.3 使用已有的私钥和CSR生成自签名证书</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#三查看证书">三、查看证书</a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#31-查看csr条目">3.1 查看CSR条目</a></li>
+            <li><a href="#32-查看证书条目">3.2 查看证书条目</a></li>
+            <li><a href="#33-验证证书是否由ca签发">3.3 验证证书是否由CA签发</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#四私钥生成与验证">四、私钥生成与验证</a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#41-创建私钥">4.1 创建私钥</a></li>
+            <li><a href="#42-验证私钥">4.2 验证私钥</a></li>
+            <li><a href="#43-验证私钥与证书和csr匹配">4.3 验证私钥与证书和CSR匹配</a></li>
+            <li><a href="#44-加密私钥">4.4 加密私钥</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#五证书格式转换">五、证书格式转换</a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#51-pem转der">5.1 PEM转DER</a></li>
+            <li><a href="#52-der转pem">5.2 DER转PEM</a></li>
+            <li><a href="#53-pem转pkcs7">5.3 PEM转PKCS7</a></li>
+            <li><a href="#54-pkcs7转换为pem">5.4 PKCS7转换为PEM</a></li>
+            <li><a href="#55-pem转换为pkcs12">5.5 PEM转换为PKCS12</a></li>
+            <li><a href="#56-pkcs12转换为pem">5.6 PKCS12转换为PEM</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/luolileyuan-blog/ts/main.js" defer></script>
+
+<script type="text/javascript" src="/luolileyuan-blog/js/busuanzi.pure.mini.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?cf0ac899c60b46276c0e5589a6602e0c";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+  
+    </body>
+</html>
